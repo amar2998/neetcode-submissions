@@ -1,0 +1,99 @@
+class TriNode{
+    public:
+        char data;
+        TriNode* childern[26];
+        bool isTerminate;
+    TriNode(){
+        this->data='\0';
+        this->isTerminate=false;
+        for(int i=0;i<26;i++){
+            childern[i]=NULL;
+        }
+        
+    }
+};
+
+class WordDictionary {
+public:
+    TriNode* root;
+    WordDictionary() {
+        root=new TriNode();
+
+    }
+    
+    void addWord(string word) {
+        TriNode* curr=this->root;
+        for(int i=0;i<word.size();i++){
+            int index=word[i]-'a';
+            if(curr->childern[index]){
+                curr=curr->childern[index];
+            }
+            else{
+                TriNode* newNode=new TriNode();
+                newNode->data=word[i];
+                curr->childern[index]=newNode;
+                curr=curr->childern[index];
+            }
+        }
+        curr->isTerminate=true;
+        return;
+
+        
+    }
+    bool backtrack(string& word, TriNode* curr, int index) {
+
+        // All characters processed
+        if (index == word.size()) {
+            return curr->isTerminate;
+        }
+
+        // Wildcard
+        if (word[index] == '.') {
+
+            for (int i = 0; i < 26; i++) {
+
+                if (curr->childern[i] != nullptr) {
+
+                    if (backtrack(
+                            word,
+                            curr->childern[i],
+                            index + 1
+                        )) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        // Normal character
+        int childIndex = word[index] - 'a';
+
+        if (curr->childern[childIndex] == nullptr) {
+            return false;
+        }
+
+        return backtrack(
+            word,
+            curr->childern[childIndex],
+            index + 1
+        );
+    }
+
+    bool search(string word) {
+        TriNode* curr=this->root; 
+        return backtrack(word,curr,0);
+
+        // for(int i=0;i<word.size();i++){
+            
+        //     if(word[i]=='.'){
+        //         for(int i=0;i<26;i++){
+        //             if(curr->childern[i]){
+
+        //             }
+        //         }
+        //     }
+        // }
+    }
+};
